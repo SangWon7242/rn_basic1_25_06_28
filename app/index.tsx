@@ -1,4 +1,9 @@
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+
+// View : 전체를 감싸는 컨테이너
+// Text : 텍스트를 표시하는 컴포넌트
+// - text를 감쌀 때는 Text 컴포넌트를 사용
+// style : 스타일을 적용하는 props
 
 export default function Index() {
   return (
@@ -9,7 +14,33 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Hello World!</Text>
+      <Text style={styles.mainText}>Hello World!</Text>
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: "bold",
+          color: "blue",
+          borderWidth: 1,
+          borderColor: "blue",
+          padding: 10,
+          margin: 10,
+          borderRadius: 10,
+        }}
+      >
+        Hello World!
+      </Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  mainText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    borderWidth: 1,
+    borderColor: "red",
+    padding: 10,
+    margin: 10,
+    borderRadius: 10,
+  },
+});
