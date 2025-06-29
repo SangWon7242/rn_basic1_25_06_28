@@ -3,21 +3,21 @@ import { StyleSheet, Text, View } from "react-native";
 export default function Index() {
   return (
     <>
-      <View style={[styles.container]}>
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <Text style={styles.cityName}>Ansan</Text>
-          </View>
-          <View style={styles.headerBottom}>
+      <View style={styles.container}>
+        <View style={styles.cityWrap}>
+          <Text style={styles.cityName}>Ansan</Text>
+        </View>
+        <View style={styles.mainWrap}>
+          <View style={styles.header}>
             <Text style={styles.regDate}>일요일, 2025-06-29</Text>
             <Text style={styles.weather}>맑음</Text>
           </View>
+          <View style={styles.body}>
+            <Text style={styles.temperature}>29</Text>
+            <Text style={styles.temperatureUnit}>°</Text>
+          </View>
+          <View style={styles.footer}></View>
         </View>
-        <View style={styles.mainWrap}>
-          <Text style={styles.temperature}>29</Text>
-          <Text style={styles.temperatureUnit}>°</Text>
-        </View>
-        <View style={styles.footer}></View>
       </View>
     </>
   );
@@ -28,25 +28,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fee142",
   },
-  header: {
+  cityWrap: {
     flex: 1,
-    backgroundColor: "#fee142",
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 3,
     borderColor: "red",
-  },
-  headerTop: {
-    flex: 1,
   },
   cityName: {
     fontSize: 40,
     fontWeight: "bold",
-    textAlign: "center",
-    padding: 10,
   },
-  headerBottom: {
-    flex: 4,
+  mainWrap: {
+    flex: 15,
+    borderWidth: 3,
+    borderColor: "blue",
+    position: "relative",
+  },
+  header: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 3,
+    borderColor: "purple",
   },
   regDate: {
     fontSize: 15,
@@ -64,19 +68,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBlockStart: 10,
   },
-  mainWrap: {
-    flex: 2,
-    backgroundColor: "#fee142",
+  body: {
+    flex: 4,
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 3,
-    borderColor: "blue",
-    position: "relative",
+    borderColor: "green",
   },
   temperature: {
     fontSize: 200,
     fontWeight: "bold",
     position: "absolute",
     top: 68,
-    left: 80,
+    left: 70,
   },
   temperatureUnit: {
     fontSize: 180,
@@ -89,6 +93,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fee142",
     borderWidth: 3,
-    borderColor: "green",
+    borderColor: "orange",
   },
 });
