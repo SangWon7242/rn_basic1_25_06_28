@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
+
+// 전역변수
+/*
+const {width: SCREEN_WIDTH} = Dimensions.get("window");
+*/
+
+const SCREEN_WIDTH: number = Dimensions.get("window").width;
 
 export default function Index() {
   return (
@@ -7,17 +14,45 @@ export default function Index() {
         <View style={styles.cityWrap}>
           <Text style={styles.cityName}>Ansan</Text>
         </View>
-        <View style={styles.mainWrap}>
-          <View style={styles.header}>
-            <Text style={styles.regDate}>일요일, 2025-06-29</Text>
-            <Text style={styles.weather}>맑음</Text>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          contentContainerStyle={styles.mainContentView}
+        >
+          <View style={styles.mainWrap}>
+            <View style={styles.header}>
+              <Text style={styles.regDate}>일요일, 2025-06-29</Text>
+              <Text style={styles.weather}>맑음</Text>
+            </View>
+            <View style={styles.body}>
+              <Text style={styles.temperature}>29</Text>
+              <Text style={styles.temperatureUnit}>°</Text>
+            </View>
+            <View style={styles.footer}></View>
           </View>
-          <View style={styles.body}>
-            <Text style={styles.temperature}>29</Text>
-            <Text style={styles.temperatureUnit}>°</Text>
+          <View style={styles.mainWrap}>
+            <View style={styles.header}>
+              <Text style={styles.regDate}>월요일, 2025-06-30</Text>
+              <Text style={styles.weather}>맑음</Text>
+            </View>
+            <View style={styles.body}>
+              <Text style={styles.temperature}>29</Text>
+              <Text style={styles.temperatureUnit}>°</Text>
+            </View>
+            <View style={styles.footer}></View>
           </View>
-          <View style={styles.footer}></View>
-        </View>
+          <View style={styles.mainWrap}>
+            <View style={styles.header}>
+              <Text style={styles.regDate}>화요일, 2025-07-01</Text>
+              <Text style={styles.weather}>맑음</Text>
+            </View>
+            <View style={styles.body}>
+              <Text style={styles.temperature}>29</Text>
+              <Text style={styles.temperatureUnit}>°</Text>
+            </View>
+            <View style={styles.footer}></View>
+          </View>
+        </ScrollView>
       </View>
     </>
   );
@@ -29,7 +64,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fee142",
   },
   cityWrap: {
-    flex: 1,
+    flex: 0.15,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
@@ -39,11 +74,12 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: "bold",
   },
+  mainContentView: {},
   mainWrap: {
-    flex: 15,
     borderWidth: 3,
     borderColor: "blue",
     position: "relative",
+    width: SCREEN_WIDTH,
   },
   header: {
     flex: 1,
