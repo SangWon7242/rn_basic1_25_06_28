@@ -13,7 +13,10 @@ export default function Index() {
             <Text style={styles.weather}>맑음</Text>
           </View>
         </View>
-        <View style={styles.mainWrap}></View>
+        <View style={styles.mainWrap}>
+          <Text style={styles.temperature}>29</Text>
+          <Text style={styles.temperatureUnit}>°</Text>
+        </View>
         <View style={styles.footer}></View>
       </View>
     </>
@@ -66,6 +69,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#fee142",
     borderWidth: 3,
     borderColor: "blue",
+    position: "relative",
+  },
+  temperature: {
+    fontSize: 200,
+    fontWeight: "bold",
+    position: "absolute",
+    top: 68,
+    left: 80,
+  },
+  temperatureUnit: {
+    fontSize: 180,
+    fontWeight: "bold",
+    position: "absolute",
+    top: 78,
+    right: 27,
   },
   footer: {
     flex: 1,
