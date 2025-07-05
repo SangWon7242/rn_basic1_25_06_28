@@ -17,6 +17,12 @@ export default function Index() {
       setErrorMsg("위치에 대한 권한 부여가 거부되었습니다.");
     }
 
+    // Location.getCurrentPositionAsync : 현재 위치 정보 가져오기
+    const {
+      coords: { latitude, longitude },
+    } = await Location.getCurrentPositionAsync({});
+    console.log(latitude, longitude);
+
     return;
   };
 
