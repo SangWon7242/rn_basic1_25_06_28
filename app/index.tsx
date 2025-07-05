@@ -2,6 +2,25 @@ import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
+const getAddressFromKakao = async (longitude: number, latitude: number) => {
+  try {
+    const response = await fetch(
+      `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}`,
+      {
+        headers: {
+          Authorization: "KakaoAK 830109adb62d749dbe192e41c1895812",
+        },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("KaKao API 오류 : ", error);
+    return null;
+  }
+};
+
 const SCREEN_WIDTH: number = Dimensions.get("window").width;
 
 export default function Index() {
@@ -24,13 +43,18 @@ export default function Index() {
     } = await Location.getCurrentPositionAsync({});
     console.log(latitude, longitude);
 
-    const address = await Location.reverseGeocodeAsync({
-      latitude,
-      longitude,
-    });
+    const address = await getAddressFromKakao(longitude, latitude);
+
     console.log(address);
-    console.log(address[0]?.city); // 시티 주소 출력
-    setCity(address[0]?.city);
+    console.log(address?.documents[0]?.address.address_name); // 도시 이름
+    console.log(address?.documents[0]?.road_address.address_name); // 도로명 주소
+
+    console.log(address?.documents[0]?.address.region_1depth_name); // 시
+    console.log(address?.documents[0]?.address.region_2depth_name); // 구
+    console.log(address?.documents[0]?.address.region_3depth_name); // 동
+
+    const city = address?.documents[0]?.address.region_2depth_name;
+    setCity(city);
 
     return;
   };
