@@ -8,15 +8,29 @@ const getAddressFromKakao = async (longitude: number, latitude: number) => {
       `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}`,
       {
         headers: {
-          Authorization: "KakaoAK 830109adb62d749dbe192e41c1895812",
+          Authorization: `KakaoAK 830109adb62d749dbe192e41c1895812`,
         },
       }
     );
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("KaKao API 오류 : ", error);
+    return null;
+  }
+};
+
+const weatherApiKey = "fe2a4b6f3bbdf5a56d7bc7c341add16b";
+
+const getWeather = async (lat: number, lon: number) => {
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=current&appid=${weatherApiKey}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Weather API 오류 : ", error);
     return null;
   }
 };
@@ -44,6 +58,7 @@ export default function Index() {
     console.log(latitude, longitude);
 
     const address = await getAddressFromKakao(longitude, latitude);
+    const weather = await getWeather(latitude, longitude);
 
     console.log(address);
     console.log(address?.documents[0]?.address.address_name); // 도시 이름
@@ -55,6 +70,12 @@ export default function Index() {
 
     const city = address?.documents[0]?.address.region_2depth_name;
     setCity(city);
+
+    console.log(weather.daily[0].weather[0].main);
+
+    weather.daily.forEach((item: any) => {
+      console.log(item.weather[0].main);
+    });
 
     return;
   };
