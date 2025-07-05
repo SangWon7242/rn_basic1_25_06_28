@@ -1,13 +1,29 @@
+import * as Location from "expo-location";
+import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
-
-// 전역변수
-/*
-const {width: SCREEN_WIDTH} = Dimensions.get("window");
-*/
 
 const SCREEN_WIDTH: number = Dimensions.get("window").width;
 
 export default function Index() {
+  const [ok, setOk] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+
+  const locationData = async () => {
+    // Location.requestForegroundPermissionsAsync : 위치 권한 부여
+    const { granted } = await Location.requestForegroundPermissionsAsync();
+
+    if (!granted) {
+      setOk(false);
+      setErrorMsg("위치에 대한 권한 부여가 거부되었습니다.");
+    }
+
+    return;
+  };
+
+  useEffect(() => {
+    locationData();
+  }, []);
+
   return (
     <>
       <View style={styles.container}>
