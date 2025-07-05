@@ -7,6 +7,7 @@ const SCREEN_WIDTH: number = Dimensions.get("window").width;
 export default function Index() {
   const [ok, setOk] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [city, setCity] = useState<string | null>("");
 
   const locationData = async () => {
     // Location.requestForegroundPermissionsAsync : 위치 권한 부여
@@ -23,6 +24,14 @@ export default function Index() {
     } = await Location.getCurrentPositionAsync({});
     console.log(latitude, longitude);
 
+    const address = await Location.reverseGeocodeAsync({
+      latitude,
+      longitude,
+    });
+    console.log(address);
+    console.log(address[0]?.city); // 시티 주소 출력
+    setCity(address[0]?.city);
+
     return;
   };
 
@@ -34,7 +43,7 @@ export default function Index() {
     <>
       <View style={styles.container}>
         <View style={styles.cityWrap}>
-          <Text style={styles.cityName}>Ansan</Text>
+          <Text style={styles.cityName}>{city}</Text>
         </View>
         <ScrollView
           horizontal
