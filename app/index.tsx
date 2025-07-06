@@ -10,7 +10,7 @@ const getWeatherInfo = async (latitude: number, longitude: number) => {
       `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${apiKey}`
     );
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
 
     return data;
   } catch (error) {
@@ -27,7 +27,7 @@ const getGoogleMapGeocode = async (latitude: number, longitude: number) => {
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
     );
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
 
     return data;
   } catch (error) {
@@ -42,6 +42,7 @@ export default function Index() {
   const [ok, setOk] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [city, setCity] = useState<string | null>("");
+  const [dailyWeatherData, setDailyWeatherData] = useState<Array<any>>([]);
 
   const locationData = async () => {
     // Location.requestForegroundPermissionsAsync : 위치 권한 부여
@@ -56,25 +57,24 @@ export default function Index() {
     const {
       coords: { latitude, longitude },
     } = await Location.getCurrentPositionAsync({});
-    console.log(latitude, longitude);
+    // console.log(latitude, longitude);
 
     const address = await getGoogleMapGeocode(latitude, longitude);
-    console.log(address);
-    console.log(address.results[3].formatted_address);
+    // console.log(address);
+    // console.log(address.results[3].formatted_address);
 
     const cityAddress = address.results[3].formatted_address;
     const citySplit = cityAddress.split(" ");
-    console.log(citySplit);
+    // console.log(citySplit);
 
     const city = `${citySplit[1]} ${citySplit[2]} ${citySplit[3]}`;
-    console.log(city);
+    // console.log(city);
     setCity(city);
 
     const weatherData = await getWeatherInfo(latitude, longitude);
-    console.log(weatherData);
-
     console.log(weatherData.daily);
-    console.log(weatherData.daily[0]);
+
+    setDailyWeatherData(weatherData.daily);
 
     return;
   };
@@ -94,39 +94,24 @@ export default function Index() {
           pagingEnabled
           contentContainerStyle={styles.mainContentView}
         >
-          <View style={styles.mainWrap}>
-            <View style={styles.header}>
-              <Text style={styles.regDate}>일요일, 2025-06-29</Text>
-              <Text style={styles.weather}>맑음</Text>
+          {dailyWeatherData.map((item, index) => (
+            <View style={styles.mainWrap} key={index}>
+              <View style={styles.header}>
+                <Text style={styles.regDate}>{item.dt}</Text>
+                <Text style={styles.weather}>{item.weather[0].main}</Text>
+              </View>
+              <View style={styles.body}>
+                <Text style={styles.temperature}>
+                  {/* 섭씨로 변환 */}
+                  {(item.temp.day - 273.15).toFixed(0)}
+                </Text>
+                <Text style={styles.temperatureUnit}>°</Text>
+              </View>
+              <View style={styles.footer}>
+                <Text style={styles.summaryText}>{item.summary}</Text>
+              </View>
             </View>
-            <View style={styles.body}>
-              <Text style={styles.temperature}>29</Text>
-              <Text style={styles.temperatureUnit}>°</Text>
-            </View>
-            <View style={styles.footer}></View>
-          </View>
-          <View style={styles.mainWrap}>
-            <View style={styles.header}>
-              <Text style={styles.regDate}>월요일, 2025-06-30</Text>
-              <Text style={styles.weather}>맑음</Text>
-            </View>
-            <View style={styles.body}>
-              <Text style={styles.temperature}>29</Text>
-              <Text style={styles.temperatureUnit}>°</Text>
-            </View>
-            <View style={styles.footer}></View>
-          </View>
-          <View style={styles.mainWrap}>
-            <View style={styles.header}>
-              <Text style={styles.regDate}>화요일, 2025-07-01</Text>
-              <Text style={styles.weather}>맑음</Text>
-            </View>
-            <View style={styles.body}>
-              <Text style={styles.temperature}>29</Text>
-              <Text style={styles.temperatureUnit}>°</Text>
-            </View>
-            <View style={styles.footer}></View>
-          </View>
+          ))}
         </ScrollView>
       </View>
     </>
@@ -205,5 +190,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fee142",
     borderWidth: 3,
     borderColor: "orange",
+  },
+  summaryText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBlockStart: 10,
+    textAlign: "center",
   },
 });
