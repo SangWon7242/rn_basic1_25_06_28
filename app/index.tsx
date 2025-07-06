@@ -36,6 +36,21 @@ const getGoogleMapGeocode = async (latitude: number, longitude: number) => {
   }
 };
 
+const convertDate = (timestamp: number) => {
+  const date = new Date(timestamp * 1000);
+  // 한국 시간대로 포맷팅
+  const formattedDate = date.toLocaleString("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return formattedDate;
+};
+
 const SCREEN_WIDTH: number = Dimensions.get("window").width;
 
 export default function Index() {
@@ -97,7 +112,7 @@ export default function Index() {
           {dailyWeatherData.map((item, index) => (
             <View style={styles.mainWrap} key={index}>
               <View style={styles.header}>
-                <Text style={styles.regDate}>{item.dt}</Text>
+                <Text style={styles.regDate}>{convertDate(item.dt)}</Text>
                 <Text style={styles.weather}>{item.weather[0].main}</Text>
               </View>
               <View style={styles.body}>
