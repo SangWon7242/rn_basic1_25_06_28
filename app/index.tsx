@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const getGoogleMapGeocode = async (latitude: number, longitude: number) => {
-  const apiKey = "";
+  const apiKey = process.env.EXPO_PUBLIC_API_KEY;
 
   try {
     const response = await fetch(
