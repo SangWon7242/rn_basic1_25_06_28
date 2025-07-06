@@ -2,35 +2,19 @@ import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
-const getAddressFromKakao = async (longitude: number, latitude: number) => {
+const getGoogleMapGeocode = async (latitude: number, longitude: number) => {
+  const apiKey = "";
+
   try {
     const response = await fetch(
-      `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}`,
-      {
-        headers: {
-          Authorization: `KakaoAK 830109adb62d749dbe192e41c1895812`,
-        },
-      }
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
     );
     const data = await response.json();
+    console.log(data);
+
     return data;
   } catch (error) {
-    console.error("KaKao API 오류 : ", error);
-    return null;
-  }
-};
-
-const weatherApiKey = "fe2a4b6f3bbdf5a56d7bc7c341add16b";
-
-const getWeather = async (lat: number, lon: number) => {
-  try {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=current&appid=${weatherApiKey}`
-    );
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Weather API 오류 : ", error);
+    console.error("구글 맵 API 호출 실패 : " + error);
     return null;
   }
 };
@@ -57,25 +41,17 @@ export default function Index() {
     } = await Location.getCurrentPositionAsync({});
     console.log(latitude, longitude);
 
-    const address = await getAddressFromKakao(longitude, latitude);
-    const weather = await getWeather(latitude, longitude);
-
+    const address = await getGoogleMapGeocode(latitude, longitude);
     console.log(address);
-    console.log(address?.documents[0]?.address.address_name); // 도시 이름
-    console.log(address?.documents[0]?.road_address.address_name); // 도로명 주소
+    console.log(address.results[3].formatted_address);
 
-    console.log(address?.documents[0]?.address.region_1depth_name); // 시
-    console.log(address?.documents[0]?.address.region_2depth_name); // 구
-    console.log(address?.documents[0]?.address.region_3depth_name); // 동
+    const cityAddress = address.results[3].formatted_address;
+    const citySplit = cityAddress.split(" ");
+    console.log(citySplit);
 
-    const city = address?.documents[0]?.address.region_2depth_name;
+    const city = `${citySplit[1]} ${citySplit[2]} ${citySplit[3]}`;
+    console.log(city);
     setCity(city);
-
-    console.log(weather.daily[0].weather[0].main);
-
-    weather.daily.forEach((item: any) => {
-      console.log(item.weather[0].main);
-    });
 
     return;
   };
@@ -147,7 +123,7 @@ const styles = StyleSheet.create({
     borderColor: "red",
   },
   cityName: {
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: "bold",
   },
   mainContentView: {},
