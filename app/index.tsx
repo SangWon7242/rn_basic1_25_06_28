@@ -2,6 +2,23 @@ import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
+const getWeatherInfo = async (latitude: number, longitude: number) => {
+  const apiKey = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
+
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${apiKey}`
+    );
+    const data = await response.json();
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    console.error("웨더 API 호출 실패 : " + error);
+    return null;
+  }
+};
+
 const getGoogleMapGeocode = async (latitude: number, longitude: number) => {
   const apiKey = process.env.EXPO_PUBLIC_API_KEY;
 
@@ -52,6 +69,12 @@ export default function Index() {
     const city = `${citySplit[1]} ${citySplit[2]} ${citySplit[3]}`;
     console.log(city);
     setCity(city);
+
+    const weatherData = await getWeatherInfo(latitude, longitude);
+    console.log(weatherData);
+
+    console.log(weatherData.daily);
+    console.log(weatherData.daily[0]);
 
     return;
   };
