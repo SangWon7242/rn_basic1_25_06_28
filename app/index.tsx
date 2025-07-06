@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -113,7 +114,17 @@ export default function Index() {
             <View style={styles.mainWrap} key={index}>
               <View style={styles.header}>
                 <Text style={styles.regDate}>{convertDate(item.dt)}</Text>
-                <Text style={styles.weather}>{item.weather[0].main}</Text>
+
+                <View style={styles.weatherWrap}>
+                  <Text style={styles.weather}>{item.weather[0].main}</Text>
+                  {/* 날씨 아이콘 표시 */}
+                  <Image
+                    source={{
+                      uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
+                    }}
+                    style={styles.weatherIcon}
+                  />
+                </View>
               </View>
               <View style={styles.body}>
                 <Text style={styles.temperature}>
@@ -174,13 +185,21 @@ const styles = StyleSheet.create({
     paddingInlineStart: 10,
     paddingInlineEnd: 10,
   },
+  weatherWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  weatherIcon: {
+    width: 80,
+    height: 80,
+  },
   weather: {
     fontSize: 30,
     fontWeight: "bold",
-    marginBlockStart: 10,
   },
   body: {
-    flex: 4,
+    flex: 3,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
