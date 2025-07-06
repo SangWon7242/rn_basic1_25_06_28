@@ -7,7 +7,7 @@ const getWeatherInfo = async (latitude: number, longitude: number) => {
 
   try {
     const response = await fetch(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${apiKey}`
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&lang=ko&units=metric&exclude=alerts&appid=${apiKey}`
     );
     const data = await response.json();
     // console.log(data);
@@ -118,7 +118,7 @@ export default function Index() {
               <View style={styles.body}>
                 <Text style={styles.temperature}>
                   {/* 섭씨로 변환 */}
-                  {(item.temp.day - 273.15).toFixed(0)}
+                  {item.temp.day.toFixed(0)}
                 </Text>
                 <Text style={styles.temperatureUnit}>°</Text>
               </View>
