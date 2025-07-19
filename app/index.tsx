@@ -1,3 +1,4 @@
+import Feather from "@expo/vector-icons/Feather";
 import { Image } from "expo-image";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
@@ -98,16 +99,19 @@ const WeatherComponent = ({
                   <View style={styles.subInfoWrap}>
                     <View style={styles.subInfoInner}>
                       <View style={styles.subInfoItem}>
+                        <Feather name="wind" size={24} color="#fff" />
                         <Text style={styles.subInfoDes}>
                           {item.wind_speed.toFixed(0)}Km/h
                         </Text>
                         <Text style={styles.subInfoWeather}>wind</Text>
                       </View>
                       <View style={styles.subInfoItem}>
+                        <Feather name="droplet" size={24} color="#fff" />
                         <Text style={styles.subInfoDes}>{item.humidity}%</Text>
                         <Text style={styles.subInfoWeather}>Humidity</Text>
                       </View>
                       <View style={styles.subInfoItem}>
+                        <Feather name="eye" size={24} color="#fff" />
                         <Text style={styles.subInfoDes}>
                           {convertVisibilityFeetToKm(
                             currentWeather?.visibility
@@ -332,7 +336,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#fff",
-    marginTop: -10,
+    marginTop: 5,
   },
   subInfoWeather: {
     fontSize: 15,
