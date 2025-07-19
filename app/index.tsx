@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import * as Location from "expo-location";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const getWeatherInfo = async (latitude: number, longitude: number) => {
@@ -79,7 +79,7 @@ export default function Index() {
     // console.log(address);
     // console.log(address.results[3].formatted_address);
 
-    const cityAddress = address.results[3].formatted_address;
+    const cityAddress = address.results[4].formatted_address;
     const citySplit = cityAddress.split(" ");
     // console.log(citySplit);
 
@@ -110,7 +110,7 @@ export default function Index() {
           pagingEnabled
           contentContainerStyle={styles.mainContentView}
         >
-          {dailyWeatherData.map((item, index) => (
+          {dailyWeatherData.map((item: any, index: number) => (
             <View style={styles.mainWrap} key={index}>
               <View style={styles.header}>
                 <Text style={styles.regDate}>{convertDate(item.dt)}</Text>
@@ -119,9 +119,7 @@ export default function Index() {
                   <Text style={styles.weather}>{item.weather[0].main}</Text>
                   {/* 날씨 아이콘 표시 */}
                   <Image
-                    source={{
-                      uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
-                    }}
+                    source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
                     style={styles.weatherIcon}
                   />
                 </View>
@@ -191,8 +189,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   weatherIcon: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
   },
   weather: {
     fontSize: 30,
