@@ -136,6 +136,34 @@ export default function Index() {
                   <Text style={styles.dailySummaryTitle}>일일 요약</Text>
                   <Text style={styles.summaryText}>{item.summary}</Text>
                 </View>
+                <View style={styles.subInfoWrap}>
+                  <View style={styles.subInfoInner}>
+                    <View style={styles.subInfoItem}>
+                      <Image
+                        source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                        style={styles.weatherIcon}
+                      />
+                      <Text style={styles.subInfoDes}>4Km/h</Text>
+                      <Text style={styles.subInfoWeather}>wind</Text>
+                    </View>
+                    <View style={styles.subInfoItem}>
+                      <Image
+                        source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                        style={styles.weatherIcon}
+                      />
+                      <Text style={styles.subInfoDes}>48%</Text>
+                      <Text style={styles.subInfoWeather}>Humidity</Text>
+                    </View>
+                    <View style={styles.subInfoItem}>
+                      <Image
+                        source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                        style={styles.weatherIcon}
+                      />
+                      <Text style={styles.subInfoDes}>1.6km</Text>
+                      <Text style={styles.subInfoWeather}>Visibility</Text>
+                    </View>
+                  </View>
+                </View>
               </View>
               <View style={styles.footer}></View>
             </View>
@@ -239,6 +267,35 @@ const styles = StyleSheet.create({
   summaryText: {
     fontSize: 18,
     marginTop: 10,
+  },
+  subInfoWrap: {
+    flex: 0.5,
+    backgroundColor: "#fee142",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  subInfoInner: {
+    backgroundColor: "#000",
+    width: 350,
+    height: 110,
+    borderRadius: 20,
+    flexDirection: "row",
+  },
+  subInfoItem: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  subInfoDes: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: -10,
+  },
+  subInfoWeather: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#fff",
   },
   footer: {
     flex: 1,
