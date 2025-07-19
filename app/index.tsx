@@ -8,7 +8,7 @@ const getWeatherInfo = async (latitude: number, longitude: number) => {
 
   try {
     const response = await fetch(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&lang=ko&units=metric&exclude=alerts&appid=${apiKey}`
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&units=metric&exclude=alerts&appid=${apiKey}&lang=ko`
     );
     const data = await response.json();
     // console.log(data);
@@ -125,15 +125,19 @@ export default function Index() {
                 </View>
               </View>
               <View style={styles.body}>
-                <Text style={styles.temperature}>
-                  {/* 섭씨로 변환 */}
-                  {item.temp.day.toFixed(0)}
-                </Text>
-                <Text style={styles.temperatureUnit}>°</Text>
+                <View style={styles.temperatureWrap}>
+                  <Text style={styles.temperature}>
+                    {/* 섭씨로 변환 */}
+                    {item.temp.day.toFixed(0)}
+                  </Text>
+                  <Text style={styles.temperatureUnit}>°</Text>
+                </View>
+                <View style={styles.summaryWrap}>
+                  <Text style={styles.dailySummaryTitle}>일일 요약</Text>
+                  <Text style={styles.summaryText}>{item.summary}</Text>
+                </View>
               </View>
-              <View style={styles.footer}>
-                <Text style={styles.summaryText}>{item.summary}</Text>
-              </View>
+              <View style={styles.footer}></View>
             </View>
           ))}
         </ScrollView>
@@ -198,35 +202,48 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 3,
-    alignItems: "center",
-    justifyContent: "center",
     borderWidth: 3,
     borderColor: "green",
   },
+  temperatureWrap: {
+    flex: 0.7,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 3,
+    borderColor: "red",
+    position: "relative",
+  },
   temperature: {
-    fontSize: 200,
+    fontSize: 180,
     fontWeight: "bold",
     position: "absolute",
-    top: 68,
-    left: 70,
+    left: 80,
   },
   temperatureUnit: {
     fontSize: 180,
     fontWeight: "bold",
     position: "absolute",
-    top: 78,
-    right: 27,
+    right: 40,
+  },
+  summaryWrap: {
+    flex: 0.3,
+    borderWidth: 3,
+    borderColor: "green",
+    paddingInline: 20,
+    paddingBlock: 10,
+  },
+  dailySummaryTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  summaryText: {
+    fontSize: 18,
+    marginTop: 10,
   },
   footer: {
     flex: 1,
     backgroundColor: "#fee142",
     borderWidth: 3,
     borderColor: "orange",
-  },
-  summaryText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBlockStart: 10,
-    textAlign: "center",
   },
 });
