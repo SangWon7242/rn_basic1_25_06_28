@@ -3,21 +3,129 @@ import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
-const getWeatherInfo = async (latitude: number, longitude: number) => {
-  const apiKey = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
+interface CurrentWeather {
+  dt: number;
+  temp: number;
+  feels_like: number;
+  pressure: number;
+  humidity: number;
+  dew_point: number;
+  uvi: number;
+  clouds: number;
+  visibility: number;
+  wind_speed: number;
+  wind_deg: number;
+  weather: Array<any>;
+}
 
-  try {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&units=metric&exclude=alerts&appid=${apiKey}&lang=ko`
-    );
-    const data = await response.json();
-    // console.log(data);
+// 가시성을 피트에서 킬로미터로 변환하는 함수
+function convertVisibilityFeetToKm(visibilityFeet?: number) {
+  // 1 피트 = 0.0003048 킬로미터
+  const feetToKmRatio = 0.0003048;
 
-    return data;
-  } catch (error) {
-    console.error("웨더 API 호출 실패 : " + error);
-    return null;
-  }
+  // 변환 계산
+  const visibilityKm = visibilityFeet ? visibilityFeet * feetToKmRatio : 0;
+
+  // 소수점 2자리까지 반올림
+  return Math.round(visibilityKm * 100) / 100;
+}
+
+const WeatherComponent = ({
+  latitude,
+  longitude,
+}: {
+  latitude: number;
+  longitude: number;
+}) => {
+  const [weatherData, setWeatherData] = useState(null);
+  const [currentWeather, setCurrentWeather] = useState<CurrentWeather>();
+  const [dailyWeather, setDailyWeather] = useState<Array<any>>([]);
+
+  useEffect(() => {
+    getWeatherInfo();
+  }, []);
+
+  const getWeatherInfo = async () => {
+    const apiKey = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
+
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&units=metric&exclude=alerts&appid=${apiKey}&lang=ko`
+      );
+      const data = await response.json();
+      console.log(data);
+
+      setWeatherData(data);
+      setCurrentWeather(data.current);
+      setDailyWeather(data.daily);
+    } catch (error) {
+      console.error("웨더 API 호출 실패 : " + error);
+    }
+  };
+
+  return (
+    <ScrollView horizontal pagingEnabled>
+      <>
+        {dailyWeather.map((item: any, index: number) => {
+          return (
+            <>
+              <View style={styles.mainWrap} key={index}>
+                <View style={styles.header}>
+                  <Text style={styles.regDate}>{convertDate(item.dt)}</Text>
+                  <View style={styles.weatherWrap}>
+                    <Text style={styles.weather}>{item.weather[0].main}</Text>
+                    {/* 날씨 아이콘 표시 */}
+                    <Image
+                      source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                      style={styles.weatherIcon}
+                    />
+                  </View>
+                </View>
+                <View style={styles.weatherSection1}>
+                  <View style={styles.temperatureWrap}>
+                    <Text style={styles.temperature}>
+                      {/* 섭씨로 변환 */}
+                      {item.temp.day.toFixed(0)}
+                    </Text>
+                    <Text style={styles.temperatureUnit}>°</Text>
+                  </View>
+                  <View style={styles.summaryWrap}>
+                    <Text style={styles.dailySummaryTitle}>일일 요약</Text>
+                    <Text style={styles.summaryText}>{item.summary}</Text>
+                  </View>
+                </View>
+                <View style={styles.weatherSection2}>
+                  <View style={styles.subInfoWrap}>
+                    <View style={styles.subInfoInner}>
+                      <View style={styles.subInfoItem}>
+                        <Text style={styles.subInfoDes}>
+                          {item.wind_speed.toFixed(0)}Km/h
+                        </Text>
+                        <Text style={styles.subInfoWeather}>wind</Text>
+                      </View>
+                      <View style={styles.subInfoItem}>
+                        <Text style={styles.subInfoDes}>{item.humidity}%</Text>
+                        <Text style={styles.subInfoWeather}>Humidity</Text>
+                      </View>
+                      <View style={styles.subInfoItem}>
+                        <Text style={styles.subInfoDes}>
+                          {convertVisibilityFeetToKm(
+                            currentWeather?.visibility
+                          )}
+                          km
+                        </Text>
+                        <Text style={styles.subInfoWeather}>Visibility</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </>
+          );
+        })}
+      </>
+    </ScrollView>
+  );
 };
 
 const getGoogleMapGeocode = async (latitude: number, longitude: number) => {
@@ -58,7 +166,8 @@ export default function Index() {
   const [ok, setOk] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [city, setCity] = useState<string | null>("");
-  const [dailyWeatherData, setDailyWeatherData] = useState<Array<any>>([]);
+  const [latitude, setLatitude] = useState<number>(0);
+  const [longitude, setLongitude] = useState<number>(0);
 
   const locationData = async () => {
     // Location.requestForegroundPermissionsAsync : 위치 권한 부여
@@ -73,7 +182,9 @@ export default function Index() {
     const {
       coords: { latitude, longitude },
     } = await Location.getCurrentPositionAsync({});
-    // console.log(latitude, longitude);
+
+    setLatitude(latitude);
+    setLongitude(longitude);
 
     const address = await getGoogleMapGeocode(latitude, longitude);
     // console.log(address);
@@ -86,11 +197,6 @@ export default function Index() {
     const city = `${citySplit[1]} ${citySplit[2]} ${citySplit[3]}`;
     // console.log(city);
     setCity(city);
-
-    const weatherData = await getWeatherInfo(latitude, longitude);
-    console.log(weatherData.daily);
-
-    setDailyWeatherData(weatherData.daily);
 
     return;
   };
@@ -105,70 +211,7 @@ export default function Index() {
         <View style={styles.cityWrap}>
           <Text style={styles.cityName}>{city}</Text>
         </View>
-        <ScrollView
-          horizontal
-          pagingEnabled
-          contentContainerStyle={styles.mainContentView}
-        >
-          {dailyWeatherData.map((item: any, index: number) => (
-            <View style={styles.mainWrap} key={index}>
-              <View style={styles.header}>
-                <Text style={styles.regDate}>{convertDate(item.dt)}</Text>
-
-                <View style={styles.weatherWrap}>
-                  <Text style={styles.weather}>{item.weather[0].main}</Text>
-                  {/* 날씨 아이콘 표시 */}
-                  <Image
-                    source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-                    style={styles.weatherIcon}
-                  />
-                </View>
-              </View>
-              <View style={styles.body}>
-                <View style={styles.temperatureWrap}>
-                  <Text style={styles.temperature}>
-                    {/* 섭씨로 변환 */}
-                    {item.temp.day.toFixed(0)}
-                  </Text>
-                  <Text style={styles.temperatureUnit}>°</Text>
-                </View>
-                <View style={styles.summaryWrap}>
-                  <Text style={styles.dailySummaryTitle}>일일 요약</Text>
-                  <Text style={styles.summaryText}>{item.summary}</Text>
-                </View>
-                <View style={styles.subInfoWrap}>
-                  <View style={styles.subInfoInner}>
-                    <View style={styles.subInfoItem}>
-                      <Image
-                        source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-                        style={styles.weatherIcon}
-                      />
-                      <Text style={styles.subInfoDes}>4Km/h</Text>
-                      <Text style={styles.subInfoWeather}>wind</Text>
-                    </View>
-                    <View style={styles.subInfoItem}>
-                      <Image
-                        source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-                        style={styles.weatherIcon}
-                      />
-                      <Text style={styles.subInfoDes}>48%</Text>
-                      <Text style={styles.subInfoWeather}>Humidity</Text>
-                    </View>
-                    <View style={styles.subInfoItem}>
-                      <Image
-                        source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-                        style={styles.weatherIcon}
-                      />
-                      <Text style={styles.subInfoDes}>1.6km</Text>
-                      <Text style={styles.subInfoWeather}>Visibility</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.footer}></View>
-            </View>
-          ))}
-        </ScrollView>
+        <WeatherComponent latitude={latitude} longitude={longitude} />
       </View>
     </>
   );
@@ -190,15 +233,13 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
   },
-  mainContentView: {},
   mainWrap: {
     borderWidth: 3,
     borderColor: "blue",
-    position: "relative",
     width: SCREEN_WIDTH,
   },
   header: {
-    flex: 1,
+    flex: 0.25,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
@@ -228,13 +269,13 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
   },
-  body: {
-    flex: 3,
+  weatherSection1: {
+    flex: 1,
     borderWidth: 3,
     borderColor: "green",
   },
   temperatureWrap: {
-    flex: 0.7,
+    flex: 5,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
@@ -254,7 +295,7 @@ const styles = StyleSheet.create({
     right: 40,
   },
   summaryWrap: {
-    flex: 0.3,
+    flexGrow: 1,
     borderWidth: 3,
     borderColor: "green",
     paddingInline: 20,
@@ -268,9 +309,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 10,
   },
-  subInfoWrap: {
+  weatherSection2: {
     flex: 0.5,
-    backgroundColor: "#fee142",
+  },
+  subInfoWrap: {
     alignItems: "center",
     justifyContent: "center",
   },
