@@ -66,68 +66,75 @@ const WeatherComponent = ({
 
   return (
     <ScrollView horizontal pagingEnabled>
-      <>
-        {dailyWeather.map((item: any, index: number) => {
-          return (
-            <>
-              <View style={styles.mainWrap} key={index}>
-                <View style={styles.header}>
-                  <Text style={styles.regDate}>{convertDate(item.dt)}</Text>
-                  <View style={styles.weatherWrap}>
-                    <Text style={styles.weather}>{item.weather[0].main}</Text>
-                    {/* 날씨 아이콘 표시 */}
-                    <Image
-                      source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-                      style={styles.weatherIcon}
-                    />
-                  </View>
-                </View>
-                <View style={styles.weatherSection1}>
-                  <View style={styles.temperatureWrap}>
-                    <Text style={styles.temperature}>
-                      {/* 섭씨로 변환 */}
-                      {item.temp.day.toFixed(0)}
+      {dailyWeather.map((item: any, index: number) => {
+        return (
+          <View style={styles.mainWrap} key={index}>
+            <View style={styles.header}>
+              <Text style={styles.regDate}>{convertDate(item.dt)}</Text>
+              <View style={styles.weatherWrap}>
+                <Text style={styles.weather}>{item.weather[0].main}</Text>
+                {/* 날씨 아이콘 표시 */}
+                <Image
+                  source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                  style={styles.weatherIcon}
+                />
+              </View>
+            </View>
+            <View style={styles.weatherSection1}>
+              <View style={styles.temperatureWrap}>
+                <Text style={styles.temperature}>
+                  {/* 섭씨로 변환 */}
+                  {item.temp.day.toFixed(0)}
+                </Text>
+                <Text style={styles.temperatureUnit}>°</Text>
+              </View>
+              <View style={styles.summaryWrap}>
+                <Text style={styles.dailySummaryTitle}>일일 요약</Text>
+                <Text style={styles.summaryText}>{item.summary}</Text>
+              </View>
+            </View>
+            <View style={styles.weatherSection2}>
+              <View style={styles.subInfoWrap}>
+                <View style={styles.subInfoInner}>
+                  <View style={styles.subInfoItem}>
+                    <Feather name="wind" size={24} color="#fff" />
+                    <Text style={styles.subInfoDes}>
+                      {item.wind_speed.toFixed(0)}Km/h
                     </Text>
-                    <Text style={styles.temperatureUnit}>°</Text>
+                    <Text style={styles.subInfoWeather}>wind</Text>
                   </View>
-                  <View style={styles.summaryWrap}>
-                    <Text style={styles.dailySummaryTitle}>일일 요약</Text>
-                    <Text style={styles.summaryText}>{item.summary}</Text>
+                  <View style={styles.subInfoItem}>
+                    <Feather name="droplet" size={24} color="#fff" />
+                    <Text style={styles.subInfoDes}>{item.humidity}%</Text>
+                    <Text style={styles.subInfoWeather}>Humidity</Text>
                   </View>
-                </View>
-                <View style={styles.weatherSection2}>
-                  <View style={styles.subInfoWrap}>
-                    <View style={styles.subInfoInner}>
-                      <View style={styles.subInfoItem}>
-                        <Feather name="wind" size={24} color="#fff" />
-                        <Text style={styles.subInfoDes}>
-                          {item.wind_speed.toFixed(0)}Km/h
-                        </Text>
-                        <Text style={styles.subInfoWeather}>wind</Text>
-                      </View>
-                      <View style={styles.subInfoItem}>
-                        <Feather name="droplet" size={24} color="#fff" />
-                        <Text style={styles.subInfoDes}>{item.humidity}%</Text>
-                        <Text style={styles.subInfoWeather}>Humidity</Text>
-                      </View>
-                      <View style={styles.subInfoItem}>
-                        <Feather name="eye" size={24} color="#fff" />
-                        <Text style={styles.subInfoDes}>
-                          {convertVisibilityFeetToKm(
-                            currentWeather?.visibility
-                          )}
-                          km
-                        </Text>
-                        <Text style={styles.subInfoWeather}>Visibility</Text>
-                      </View>
-                    </View>
+                  <View style={styles.subInfoItem}>
+                    <Feather name="eye" size={24} color="#fff" />
+                    <Text style={styles.subInfoDes}>
+                      {convertVisibilityFeetToKm(currentWeather?.visibility)}
+                      km
+                    </Text>
+                    <Text style={styles.subInfoWeather}>Visibility</Text>
                   </View>
                 </View>
               </View>
-            </>
-          );
-        })}
-      </>
+            </View>
+            <View style={styles.weatherSection3}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.weeklyWeatherTitle}>주간별 날씨</Text>
+              </View>
+              <View style={styles.sectionContent}>
+                <View style={styles.weeklyWeatherInner}>
+                  <View style={styles.weeklyWeatherItem}></View>
+                  <View style={styles.weeklyWeatherItem}></View>
+                  <View style={styles.weeklyWeatherItem}></View>
+                  <View style={styles.weeklyWeatherItem}></View>
+                </View>
+              </View>
+            </View>
+          </View>
+        );
+      })}
     </ScrollView>
   );
 };
@@ -227,7 +234,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fee142",
   },
   cityWrap: {
-    flex: 0.15,
+    flex: 0.1,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
@@ -243,7 +250,7 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
   },
   header: {
-    flex: 0.25,
+    flex: 0.35,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
@@ -279,7 +286,7 @@ const styles = StyleSheet.create({
     borderColor: "green",
   },
   temperatureWrap: {
-    flex: 5,
+    flex: 7,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
@@ -314,7 +321,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   weatherSection2: {
-    flex: 0.5,
+    flex: 0.4,
+    alignItems: "center",
+    justifyContent: "center",
   },
   subInfoWrap: {
     alignItems: "center",
@@ -342,6 +351,37 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
     color: "#fff",
+  },
+  weatherSection3: {
+    flex: 0.5,
+    borderWidth: 3,
+    borderColor: "blue",
+    paddingBlock: 5,
+    paddingInline: 10,
+  },
+  sectionHeader: {},
+  weeklyWeatherTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  sectionContent: {
+    flex: 0.8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  weeklyWeatherInner: {
+    flex: 1,
+    flexDirection: "row",
+    width: 370,
+    columnGap: 10,
+    marginTop: 5,
+  },
+  weeklyWeatherItem: {
+    flex: 1,
+    flexGrow: 1,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#000",
   },
   footer: {
     flex: 1,
