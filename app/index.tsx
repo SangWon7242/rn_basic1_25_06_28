@@ -2,7 +2,14 @@ import Feather from "@expo/vector-icons/Feather";
 import { Image } from "expo-image";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 interface CurrentWeather {
   dt: number;
@@ -30,6 +37,26 @@ function convertVisibilityFeetToKm(visibilityFeet?: number) {
   // 소수점 2자리까지 반올림
   return Math.round(visibilityKm * 100) / 100;
 }
+
+const RenderWeeklyWeatherItem = ({ dailyData }: { dailyData: any }) => {
+  const [dailyDayTemp, setDailyDayTemp] = useState<number>(0);
+  const weatherIcon = dailyData.item.weather[0].icon;
+
+  useEffect(() => {
+    setDailyDayTemp(dailyData.item.temp.day.toFixed(0));
+  }, []);
+
+  return (
+    <View style={styles.weeklyWeatherItem}>
+      <Text style={styles.temperatureItem}>{dailyDayTemp}°</Text>
+      {/* 날씨 아이콘 표시 */}
+      <Image
+        source={`https://openweathermap.org/img/wn/${weatherIcon}@2x.png`}
+        style={styles.weeklyWeatherIcon}
+      />
+    </View>
+  );
+};
 
 const WeatherComponent = ({
   latitude,
@@ -124,12 +151,13 @@ const WeatherComponent = ({
                 <Text style={styles.weeklyWeatherTitle}>주간별 날씨</Text>
               </View>
               <View style={styles.sectionContent}>
-                <View style={styles.weeklyWeatherInner}>
-                  <View style={styles.weeklyWeatherItem}></View>
-                  <View style={styles.weeklyWeatherItem}></View>
-                  <View style={styles.weeklyWeatherItem}></View>
-                  <View style={styles.weeklyWeatherItem}></View>
-                </View>
+                <FlatList
+                  data={dailyWeather}
+                  renderItem={(item) => (
+                    <RenderWeeklyWeatherItem dailyData={item} />
+                  )}
+                  contentContainerStyle={styles.weeklyWeatherInner}
+                />
               </View>
             </View>
           </View>
@@ -377,11 +405,18 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   weeklyWeatherItem: {
-    flex: 1,
     flexGrow: 1,
+    width: 50,
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#000",
+  },
+  temperatureItem: {},
+  weeklyWeatherIcon: {
+    width: 50,
+    height: 50,
   },
   footer: {
     flex: 1,
