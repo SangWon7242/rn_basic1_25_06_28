@@ -46,6 +46,8 @@ const RenderWeeklyWeatherItem = ({ dailyData }: { dailyData: any }) => {
     setDailyDayTemp(dailyData.item.temp.day.toFixed(0));
   }, []);
 
+  console.log(dailyData);
+
   return (
     <View style={styles.weeklyWeatherItem}>
       <Text style={styles.temperatureItem}>{dailyDayTemp}°</Text>
@@ -92,78 +94,84 @@ const WeatherComponent = ({
   };
 
   return (
-    <ScrollView horizontal pagingEnabled>
-      {dailyWeather.map((item: any, index: number) => {
-        return (
-          <View style={styles.mainWrap} key={index}>
-            <View style={styles.header}>
-              <Text style={styles.regDate}>{convertDate(item.dt)}</Text>
-              <View style={styles.weatherWrap}>
-                <Text style={styles.weather}>{item.weather[0].main}</Text>
-                {/* 날씨 아이콘 표시 */}
-                <Image
-                  source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-                  style={styles.weatherIcon}
-                />
+    <>
+      <ScrollView horizontal pagingEnabled>
+        {dailyWeather.map((item: any, index: number) => {
+          return (
+            <View style={styles.mainWrap} key={index}>
+              <View style={styles.header}>
+                <Text style={styles.regDate}>{convertDate(item.dt)}</Text>
+                <View style={styles.weatherWrap}>
+                  <Text style={styles.weather}>{item.weather[0].main}</Text>
+                  {/* 날씨 아이콘 표시 */}
+                  <Image
+                    source={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                    style={styles.weatherIcon}
+                  />
+                </View>
               </View>
-            </View>
-            <View style={styles.weatherSection1}>
-              <View style={styles.temperatureWrap}>
-                <Text style={styles.temperature}>
-                  {/* 섭씨로 변환 */}
-                  {item.temp.day.toFixed(0)}
-                </Text>
-                <Text style={styles.temperatureUnit}>°</Text>
+              <View style={styles.weatherSection1}>
+                <View style={styles.temperatureWrap}>
+                  <Text style={styles.temperature}>
+                    {/* 섭씨로 변환 */}
+                    {item.temp.day.toFixed(0)}
+                  </Text>
+                  <Text style={styles.temperatureUnit}>°</Text>
+                </View>
+                <View style={styles.summaryWrap}>
+                  <Text style={styles.dailySummaryTitle}>일일 요약</Text>
+                  <Text style={styles.summaryText}>{item.summary}</Text>
+                </View>
               </View>
-              <View style={styles.summaryWrap}>
-                <Text style={styles.dailySummaryTitle}>일일 요약</Text>
-                <Text style={styles.summaryText}>{item.summary}</Text>
-              </View>
-            </View>
-            <View style={styles.weatherSection2}>
-              <View style={styles.subInfoWrap}>
-                <View style={styles.subInfoInner}>
-                  <View style={styles.subInfoItem}>
-                    <Feather name="wind" size={24} color="#fff" />
-                    <Text style={styles.subInfoDes}>
-                      {item.wind_speed.toFixed(0)}Km/h
-                    </Text>
-                    <Text style={styles.subInfoWeather}>wind</Text>
-                  </View>
-                  <View style={styles.subInfoItem}>
-                    <Feather name="droplet" size={24} color="#fff" />
-                    <Text style={styles.subInfoDes}>{item.humidity}%</Text>
-                    <Text style={styles.subInfoWeather}>Humidity</Text>
-                  </View>
-                  <View style={styles.subInfoItem}>
-                    <Feather name="eye" size={24} color="#fff" />
-                    <Text style={styles.subInfoDes}>
-                      {convertVisibilityFeetToKm(currentWeather?.visibility)}
-                      km
-                    </Text>
-                    <Text style={styles.subInfoWeather}>Visibility</Text>
+              <View style={styles.weatherSection2}>
+                <View style={styles.subInfoWrap}>
+                  <View style={styles.subInfoInner}>
+                    <View style={styles.subInfoItem}>
+                      <Feather name="wind" size={24} color="#fff" />
+                      <Text style={styles.subInfoDes}>
+                        {item.wind_speed.toFixed(0)}Km/h
+                      </Text>
+                      <Text style={styles.subInfoWeather}>wind</Text>
+                    </View>
+                    <View style={styles.subInfoItem}>
+                      <Feather name="droplet" size={24} color="#fff" />
+                      <Text style={styles.subInfoDes}>{item.humidity}%</Text>
+                      <Text style={styles.subInfoWeather}>Humidity</Text>
+                    </View>
+                    <View style={styles.subInfoItem}>
+                      <Feather name="eye" size={24} color="#fff" />
+                      <Text style={styles.subInfoDes}>
+                        {convertVisibilityFeetToKm(currentWeather?.visibility)}
+                        km
+                      </Text>
+                      <Text style={styles.subInfoWeather}>Visibility</Text>
+                    </View>
                   </View>
                 </View>
               </View>
             </View>
-            <View style={styles.weatherSection3}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.weeklyWeatherTitle}>주간별 날씨</Text>
-              </View>
-              <View style={styles.sectionContent}>
-                <FlatList
-                  data={dailyWeather}
-                  renderItem={(item) => (
-                    <RenderWeeklyWeatherItem dailyData={item} />
-                  )}
-                  contentContainerStyle={styles.weeklyWeatherInner}
-                />
-              </View>
-            </View>
-          </View>
-        );
-      })}
-    </ScrollView>
+          );
+        })}
+      </ScrollView>
+
+      <View style={styles.weatherSection3}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.weeklyWeatherTitle}>주간별 날씨</Text>
+        </View>
+        <View style={styles.sectionContent}>
+          <FlatList
+            data={dailyWeather}
+            renderItem={(item) => <RenderWeeklyWeatherItem dailyData={item} />}
+            horizontal // 수평 스크롤 활성화
+            showsHorizontalScrollIndicator={false} // 스크롤바 숨기기
+            snapToInterval={ITEM_WIDTH + 10}
+            contentContainerStyle={styles.weeklyWeatherInner}
+            keyExtractor={(_, index) => index.toString()}
+            initialNumToRender={4} // 초기에 랜더링 할 아이템 수
+          />
+        </View>
+      </View>
+    </>
   );
 };
 
@@ -198,8 +206,6 @@ const convertDate = (timestamp: number) => {
 
   return formattedDate;
 };
-
-const SCREEN_WIDTH: number = Dimensions.get("window").width;
 
 export default function Index() {
   const [ok, setOk] = useState<boolean>(false);
@@ -255,6 +261,9 @@ export default function Index() {
     </>
   );
 }
+
+const SCREEN_WIDTH: number = Dimensions.get("window").width;
+const ITEM_WIDTH: number = (SCREEN_WIDTH - 80) / 4; // 화면 너비에서 여백을 제외하고 4등분
 
 const styles = StyleSheet.create({
   container: {
@@ -387,7 +396,6 @@ const styles = StyleSheet.create({
     paddingBlock: 5,
     paddingInline: 10,
   },
-  sectionHeader: {},
   weeklyWeatherTitle: {
     fontSize: 18,
     fontWeight: "bold",
@@ -404,19 +412,23 @@ const styles = StyleSheet.create({
     columnGap: 10,
     marginTop: 5,
   },
+  sectionHeader: {},
   weeklyWeatherItem: {
-    flexGrow: 1,
-    width: 50,
+    width: ITEM_WIDTH,
+    height: 100,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: "#000",
   },
-  temperatureItem: {},
   weeklyWeatherIcon: {
     width: 50,
     height: 50,
+  },
+  temperatureItem: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
   footer: {
     flex: 1,
