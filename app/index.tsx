@@ -38,6 +38,42 @@ function convertVisibilityFeetToKm(visibilityFeet?: number) {
   return Math.round(visibilityKm * 100) / 100;
 }
 
+const formatMonthDay = (timestamp: number) => {
+  const date = new Date(timestamp * 1000);
+
+  // 한국 시간대로 포맷팅
+  const formattedDate = date.toLocaleString("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
+  const parts = formattedDate.split(". ");
+
+  const partsMap = parts.map((str) => str.trim());
+
+  const monthsData: { [key: string]: string } = {
+    "01": "Jan",
+    "02": "Feb",
+    "03": "Mar",
+    "04": "Apr",
+    "05": "May",
+    "06": "Jun",
+    "07": "Jul",
+    "08": "Aug",
+    "09": "Sep",
+    "10": "Oct",
+    "11": "Nov",
+    "12": "Dec",
+  };
+
+  const month = monthsData[partsMap[1]];
+  const day = partsMap[2].replace(".", "");
+
+  return `${month} ${day}`;
+};
+
 const RenderWeeklyWeatherItem = ({ dailyData }: { dailyData: any }) => {
   const [dailyDayTemp, setDailyDayTemp] = useState<number>(0);
   const weatherIcon = dailyData.item.weather[0].icon;
@@ -45,8 +81,6 @@ const RenderWeeklyWeatherItem = ({ dailyData }: { dailyData: any }) => {
   useEffect(() => {
     setDailyDayTemp(dailyData.item.temp.day.toFixed(0));
   }, []);
-
-  console.log(dailyData);
 
   return (
     <View style={styles.weeklyWeatherItem}>
@@ -56,6 +90,9 @@ const RenderWeeklyWeatherItem = ({ dailyData }: { dailyData: any }) => {
         source={`https://openweathermap.org/img/wn/${weatherIcon}@2x.png`}
         style={styles.weeklyWeatherIcon}
       />
+      <Text style={styles.weeklyWeatherMonthDay}>
+        {formatMonthDay(dailyData.item.dt)}
+      </Text>
     </View>
   );
 };
@@ -274,24 +311,18 @@ const styles = StyleSheet.create({
     flex: 0.1,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 3,
-    borderColor: "red",
   },
   cityName: {
     fontSize: 30,
     fontWeight: "bold",
   },
   mainWrap: {
-    borderWidth: 3,
-    borderColor: "blue",
     width: SCREEN_WIDTH,
   },
   header: {
     flex: 0.35,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 3,
-    borderColor: "purple",
   },
   regDate: {
     fontSize: 15,
@@ -319,15 +350,11 @@ const styles = StyleSheet.create({
   },
   weatherSection1: {
     flex: 1,
-    borderWidth: 3,
-    borderColor: "green",
   },
   temperatureWrap: {
     flex: 7,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 3,
-    borderColor: "red",
     position: "relative",
   },
   temperature: {
@@ -344,8 +371,6 @@ const styles = StyleSheet.create({
   },
   summaryWrap: {
     flexGrow: 1,
-    borderWidth: 3,
-    borderColor: "green",
     paddingInline: 20,
     paddingBlock: 10,
   },
@@ -391,10 +416,9 @@ const styles = StyleSheet.create({
   },
   weatherSection3: {
     flex: 0.5,
-    borderWidth: 3,
-    borderColor: "blue",
     paddingBlock: 5,
     paddingInline: 10,
+    marginTop: 10,
   },
   weeklyWeatherTitle: {
     fontSize: 18,
@@ -410,7 +434,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: 370,
     columnGap: 10,
-    marginTop: 5,
+    marginTop: 10,
   },
   sectionHeader: {},
   weeklyWeatherItem: {
@@ -430,10 +454,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+  weeklyWeatherMonthDay: {
+    fontSize: 15,
+    fontWeight: "bold",
+  },
   footer: {
     flex: 1,
     backgroundColor: "#fee142",
-    borderWidth: 3,
-    borderColor: "orange",
   },
 });
