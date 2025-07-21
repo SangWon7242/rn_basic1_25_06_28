@@ -40,11 +40,11 @@ const formatMonthDay = (timestamp: number) => {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
   const parts = formattedDate.split(". ");
-
-  const partsMap = parts.map((str) => str.trim());
 
   const monthsData: { [key: string]: string } = {
     "01": "Jan",
@@ -61,8 +61,8 @@ const formatMonthDay = (timestamp: number) => {
     "12": "Dec",
   };
 
-  const month = monthsData[partsMap[1]];
-  const day = partsMap[2].replace(".", "");
+  const month = monthsData[parts[1]];
+  const day = parts[2];
 
   return `${month} ${day}`;
 };
